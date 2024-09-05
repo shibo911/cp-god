@@ -43,9 +43,8 @@ using namespace __gnu_pbds;
 typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key, less<ll> is comparator
 auto start = high_resolution_clock::now();
 
-// cf 968 div 2
-// cc 149
-// cf 969 div 2
+// cf 970 div 3
+// cc 150
 
 ll mod = 998244353;
 ll MAXN = 1e1 + 1;
@@ -534,7 +533,9 @@ void fileIOE()
 // 13. Think dfs/bfs.
 // 14. Think bipartite.
 // 15. Think in complement like all - answer.
-// 16. Think brute force.
+// 16. In case of palindromic, think till half only.
+// 17. Subtree -> Euler Tour.
+// 18. Think brute force.
 
 void solve()
 {
