@@ -1,1 +1,2 @@
-
+5.47e-05 seconds
+Memory used: 3 MB

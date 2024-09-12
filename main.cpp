@@ -265,7 +265,7 @@ void print_on_bits(ll x)
 			cout << k << ' ';
 		}
 	}
-	cout << '\n';
+	cout << endl;
 }
 
 ll count_on_bits(ll x)
@@ -500,7 +500,7 @@ void timer()
 	auto stop = high_resolution_clock::now();
 	duration<double> duration = stop - start;
 	cerr << duration.count() << " seconds" << endl;
-	cerr << "Memory used: " << memInfo.WorkingSetSize / (1024 * 1024) << " MB\n";
+	cerr << "Memory used: " << memInfo.WorkingSetSize / (1024 * 1024) << " MB" << endl;
 }
 
 void solve()
