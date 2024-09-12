@@ -26,6 +26,8 @@
 #include <random>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
+#include <windows.h>
+#include <psapi.h>
 #define endl '\n' // comment for interactive problems
 #define shibo                     \
 	ios_base::sync_with_stdio(0); \
@@ -126,7 +128,7 @@ vector<ll> getFactorization(ll x)
 
 void sieve()
 {
-	MAXN = 5e7;
+	MAXN = 5e6;
 	sieveerato.resize(MAXN, 1);
 	sieveerato[0] = 0;
 	sieveerato[1] = 0;
@@ -493,27 +495,12 @@ namespace MillerRabin
 
 void timer()
 {
+	PROCESS_MEMORY_COUNTERS memInfo;
+	GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(memInfo));
 	auto stop = high_resolution_clock::now();
 	duration<double> duration = stop - start;
 	cerr << duration.count() << " seconds" << endl;
-}
-
-void fileIOE()
-{
-#ifndef ONLINE_JUDGE
-	if (!freopen("input.txt", "r", stdin))
-	{
-		return;
-	}
-	if (!freopen("output.txt", "w", stdout))
-	{
-		return;
-	}
-	if (!freopen("error.txt", "w", stderr))
-	{
-		return;
-	}
-#endif
+	cerr << "Memory used: " << memInfo.WorkingSetSize / (1024 * 1024) << " MB\n";
 }
 
 void solve()
@@ -523,13 +510,12 @@ void solve()
 signed main()
 {
 	shibo
-	fileIOE(); // comment for interactive problems
-	ll t = 1,
-	   n = 2e5;
+		ll t = 1,
+		   n = 2e5;
 	// prime(); // uncomment to get prime numbers till 1e7 and isPrime functionality
-	//  sievespf(); // uncomment for getFactorization functionality
-	// preNCR(); // uncomment to get ncr of numbers % mod
-	//  MillerRabin::init(); // uncomment to get primality test upto 1e18
+	//   sievespf(); // uncomment for getFactorization functionality
+	//  preNCR(); // uncomment to get ncr of numbers % mod
+	//   MillerRabin::init(); // uncomment to get primality test upto 1e18
 	cin >> t; // uncomment to use test cases
 	while (t--)
 	{
