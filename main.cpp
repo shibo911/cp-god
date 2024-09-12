@@ -43,10 +43,10 @@ using namespace __gnu_pbds;
 typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key, less<ll> is comparator
 auto start = high_resolution_clock::now();
 
-// cf 970 div 3
-// cc 150
+// lc w
+// gfg 171
 
-ll mod = 998244353;
+ll mod = 1e9 + 7;
 ll MAXN = 1e1 + 1;
 ll facN = 1e1 + 1;
 vector<ll> sieveerato(MAXN, 1);
@@ -159,9 +159,9 @@ bool isPrime(ll n)
 {
 	if (sieveerato[n] == 1)
 	{
-		return true;
+		return 1;
 	}
-	return false;
+	return 0;
 }
 
 ll power(ll x, ll y)
@@ -466,13 +466,13 @@ namespace MillerRabin
 			{
 				d = mul_mod(c, c, n);
 				if (d == 1 && c != 1 && c != (n - 1))
-					return false;
+					return 0;
 				c = d;
 			}
 			if (c != 1)
-				return false;
+				return 0;
 		}
-		return true;
+		return 1;
 	}
 	void init()
 	{
@@ -493,11 +493,9 @@ namespace MillerRabin
 
 void timer()
 {
-#ifndef ONLINE_JUDGE
 	auto stop = high_resolution_clock::now();
 	duration<double> duration = stop - start;
-	cout << duration.count() << " seconds" << endl;
-#endif
+	cerr << duration.count() << " seconds" << endl;
 }
 
 void fileIOE()
@@ -517,25 +515,6 @@ void fileIOE()
 	}
 #endif
 }
-
-// 1.  Think DP/recursion.
-// 2.  Think greedy.
-// 3.  Think binary search.
-// 4.  Think sliding window/two pointer.
-// 5.  Think bit masking.
-// 6.  Think bit manipulation.
-// 7.  Think prefix.
-// 8.  Think difference array.
-// 9.  Think mapping.
-// 10. Think multiset/ordered set.
-// 11. Think gcd/lcm/modulo arithmetic.
-// 12. Think in variables/expressions.
-// 13. Think dfs/bfs.
-// 14. Think bipartite.
-// 15. Think in complement like all - answer.
-// 16. In case of palindromic, think till half only.
-// 17. Subtree -> Euler Tour.
-// 18. Think brute force.
 
 void solve()
 {
