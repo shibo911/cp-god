@@ -26,8 +26,6 @@
 #include <random>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
-#include <windows.h>
-#include <psapi.h>
 #define endl '\n' // comment for interactive problems
 #define shibo                     \
 	ios_base::sync_with_stdio(0); \
@@ -45,8 +43,8 @@ using namespace __gnu_pbds;
 typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key, less<ll> is comparator
 auto start = high_resolution_clock::now();
 
-// lc w
-// gfg 171
+// cf 973 div 2
+// cc 153
 
 ll mod = 1e9 + 7;
 ll MAXN = 1e1 + 1;
@@ -99,7 +97,7 @@ const ll inf = LLONG_MAX - 1;
 
 void sievespf()
 {
-	MAXN = 1e5;
+	MAXN = 1e4 + 5;
 	spf.resize(MAXN, 1);
 	spf[0] = 0;
 	for (ll i = 2; i <= MAXN - 1; i++)
@@ -493,18 +491,136 @@ namespace MillerRabin
 	}
 }
 
+struct ST
+{
+	vector<vector<ll>> t;
+	ll n;
+
+	ST(ll size)
+	{
+		n = size;
+		t.resize(4 * n, {});
+	}
+
+	void build(vector<ll> &a, ll node, ll b, ll e)
+	{
+		if (b == e)
+		{
+			t[node].push_back(a[b]);
+			return;
+		}
+		ll mid = (b + e) >> 1;
+		ll leftChild = node << 1;
+		ll rightChild = leftChild | 1;
+		build(a, leftChild, b, mid);
+		build(a, rightChild, mid + 1, e);
+		auto a1 = t[leftChild];
+		auto a2 = t[rightChild];
+		vector<ll> a3;
+		ll i = 0, j = 0;
+		while (i < a1.size() && j < a2.size())
+		{
+			if (a1[i] <= a2[j])
+			{
+				a3.push_back(a1[i]);
+				++i;
+			}
+			else
+			{
+				a3.push_back(a2[j]);
+				++j;
+			}
+		}
+		while (i < a1.size())
+		{
+			a3.push_back(a1[i]);
+			++i;
+		}
+		while (j < a2.size())
+		{
+			a3.push_back(a2[j]);
+			++j;
+		}
+		t[node] = a3;
+	}
+
+	// void upd(ll node, ll b, ll e, ll i, ll x)
+	// {
+	// 	if (b > i || e < i)
+	// 	{
+	// 		return;
+	// 	}
+	// 	if (b == e && b == i)
+	// 	{
+	// 		t[node] = x;
+	// 		return;
+	// 	}
+	// 	ll mid = (b + e) >> 1;
+	// 	ll leftChild = node << 1;
+	// 	ll rightChild = leftChild | 1;
+	// 	upd(leftChild, b, mid, i, x);
+	// 	upd(rightChild, mid + 1, e, i, x);
+	// 	t[node] = t[leftChild] + t[rightChild];
+	// }
+
+	ll query(ll node, ll b, ll e, ll i, ll j, ll k)
+	{
+		if (e < i || b > j)
+		{
+			return 0;
+		}
+		if (i <= b && j >= e)
+		{
+			auto it = upper_bound(t[node].begin(), t[node].end(), k);
+			return t[node].end() - it;
+		}
+		else
+		{
+			ll mid = b + (e - b) / 2;
+			ll lq = query(node * 2, b, mid, i, j, k);
+			ll rq = query(node * 2 + 1, mid + 1, e, i, j, k);
+			return lq + rq;
+		}
+	}
+};
+
 void timer()
 {
-	PROCESS_MEMORY_COUNTERS memInfo;
-	GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(memInfo));
 	auto stop = high_resolution_clock::now();
 	duration<double> duration = stop - start;
 	cerr << duration.count() << " seconds" << endl;
-	cerr << "Memory used: " << memInfo.WorkingSetSize / (1024 * 1024) << " MB" << endl;
 }
+
+void fileIOE()
+{
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+	freopen("error.txt", "w", stderr);
+#endif
+}
+
+// 1.  Think DP/recursion.
+// 2.  Think greedy.
+// 3.  Think binary search.
+// 4.  Think sliding window/two pointer.
+// 5.  Think bit masking.
+// 6.  Think bit manipulation.
+// 7.  Think prefix.
+// 8.  Think difference array.
+// 9.  Think mapping.
+// 10. Think multiset/ordered set.
+// 11. Think gcd/lcm/modulo arithmetic.
+// 12. Think in variables/expressions.
+// 13. Think dfs/bfs.
+// 14. Think bipartite.
+// 15. Think in complement like all - answer.
+// 16. Think segment tree.
+// 17. Think brute force.
 
 void solve()
 {
+	
 }
 
 signed main()
@@ -512,10 +628,11 @@ signed main()
 	shibo
 		ll t = 1,
 		   n = 2e5;
-	// prime(); // uncomment to get prime numbers till 1e7 and isPrime functionality
-	//   sievespf(); // uncomment for getFactorization functionality
-	//  preNCR(); // uncomment to get ncr of numbers % mod
-	//   MillerRabin::init(); // uncomment to get primality test upto 1e18
+	// fileIOE();
+	//    prime(); // uncomment to get prime numbers till 1e7 and isPrime functionality
+	//    sievespf(); // uncomment for getFactorization functionality
+	//     preNCR(); // uncomment to get ncr of numbers % mod
+	//      MillerRabin::init(); // uncomment to get primality test upto 1e18
 	cin >> t; // uncomment to use test cases
 	while (t--)
 	{

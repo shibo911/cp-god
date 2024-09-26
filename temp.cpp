@@ -1,42 +1,44 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
+
 using namespace std;
 
-#define ll long long
-const int mod = 1e9+7;
+// Function to guess the password
+void guess_password(int n) {
+    string password = "";
+    for (int i = 0; i < n; ++i) {
+        // Query for '0' at current position
+        cout << "? " << password + "0" << endl;
+        fflush(stdout);
+        int response_zero;
+        cin >> response_zero;
 
-ll n, x;
-vector<ll> a;
-vector<ll> dp;
+        // Query for '1' at current position
+        cout << "? " << password + "1" << endl;
+        fflush(stdout);
+        int response_one;
+        cin >> response_one;
 
-ll recursiveDP(ll sum) {
-    if (sum == 0) return 1; // Base case: 1 way to make sum 0 (no coins)
-    if (dp[sum] != -1) return dp[sum]; // Use cached result
-
-    dp[sum] = 0;
-    for (ll i = 0; i < n; ++i) {
-        if (sum - a[i] >= 0) {
-            dp[sum] = (dp[sum] + recursiveDP(sum - a[i])) % mod;
+        // Append the correct bit to the password
+        if (response_zero) {
+            password += "0";
+        } else if (response_one) {
+            password += "1";
         }
     }
-    
-    return dp[sum];
-}
 
-void solve() {
-    cin >> n >> x;
-    a.resize(n);
-    dp.assign(x + 1, -1);  // Initialize dp array with -1 indicating uncomputed states
-
-    for (ll i = 0; i < n; ++i) {
-        cin >> a[i];
-    }
-
-    cout << recursiveDP(x) << endl;
+    // Output the guessed password
+    cout << "! " << password << endl;
+    fflush(stdout);
 }
 
 int main() {
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
-    solve();
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        guess_password(n);
+    }
     return 0;
 }
