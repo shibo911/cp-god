@@ -43,8 +43,8 @@ using namespace __gnu_pbds;
 typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key, less<ll> is comparator
 auto start = high_resolution_clock::now();
 
-// cf 973 div 2
 // cc 153
+// cf 975 div 2
 
 ll mod = 1e9 + 7;
 ll MAXN = 1e1 + 1;
@@ -493,20 +493,28 @@ namespace MillerRabin
 
 struct ST
 {
-	vector<vector<ll>> t;
+	vector<pair<ll, ll>> t;
 	ll n;
 
 	ST(ll size)
 	{
 		n = size;
-		t.resize(4 * n, {});
+		t.resize(4 * n, {0, 0});
 	}
 
-	void build(vector<ll> &a, ll node, ll b, ll e)
+	void build(string &a, ll node, ll b, ll e)
 	{
 		if (b == e)
 		{
-			t[node].push_back(a[b]);
+
+			if (a[b] == '(')
+			{
+				t[node] = {1, 0};
+			}
+			else
+			{
+				t[node] = {0, 1};
+			}
 			return;
 		}
 		ll mid = (b + e) >> 1;
@@ -514,73 +522,51 @@ struct ST
 		ll rightChild = leftChild | 1;
 		build(a, leftChild, b, mid);
 		build(a, rightChild, mid + 1, e);
-		auto a1 = t[leftChild];
-		auto a2 = t[rightChild];
-		vector<ll> a3;
-		ll i = 0, j = 0;
-		while (i < a1.size() && j < a2.size())
-		{
-			if (a1[i] <= a2[j])
-			{
-				a3.push_back(a1[i]);
-				++i;
-			}
-			else
-			{
-				a3.push_back(a2[j]);
-				++j;
-			}
-		}
-		while (i < a1.size())
-		{
-			a3.push_back(a1[i]);
-			++i;
-		}
-		while (j < a2.size())
-		{
-			a3.push_back(a2[j]);
-			++j;
-		}
-		t[node] = a3;
+		ll mini = min(t[leftChild].first, t[rightChild].second);
+		t[node] = {(t[leftChild].first - mini + t[rightChild].first),
+				   (t[leftChild].second + t[rightChild].second - mini)};
 	}
 
-	// void upd(ll node, ll b, ll e, ll i, ll x)
+	// void upd(ll node, ll b, ll e, ll i, char oldChar, char newChar)
 	// {
 	// 	if (b > i || e < i)
 	// 	{
 	// 		return;
 	// 	}
-	// 	if (b == e && b == i)
+	// 	if (b == e)
 	// 	{
-	// 		t[node] = x;
+	// 		t[node][oldChar - 'a'] = 0;
+	// 		t[node][newChar - 'a'] = 1;
 	// 		return;
 	// 	}
 	// 	ll mid = (b + e) >> 1;
 	// 	ll leftChild = node << 1;
 	// 	ll rightChild = leftChild | 1;
-	// 	upd(leftChild, b, mid, i, x);
-	// 	upd(rightChild, mid + 1, e, i, x);
-	// 	t[node] = t[leftChild] + t[rightChild];
+	// 	upd(leftChild, b, mid, i, oldChar, newChar);
+	// 	upd(rightChild, mid + 1, e, i, oldChar, newChar);
+	// 	for (int i = 0; i < 26; ++i)
+	// 	{
+	// 		t[node][i] = t[leftChild][i] + t[rightChild][i];
+	// 	}
 	// }
 
-	ll query(ll node, ll b, ll e, ll i, ll j, ll k)
+	pair<ll, ll> query(ll node, ll b, ll e, ll i, ll j)
 	{
 		if (e < i || b > j)
 		{
-			return 0;
+			return {0, 0};
 		}
 		if (i <= b && j >= e)
 		{
-			auto it = upper_bound(t[node].begin(), t[node].end(), k);
-			return t[node].end() - it;
+			return t[node];
 		}
-		else
-		{
-			ll mid = b + (e - b) / 2;
-			ll lq = query(node * 2, b, mid, i, j, k);
-			ll rq = query(node * 2 + 1, mid + 1, e, i, j, k);
-			return lq + rq;
-		}
+		ll mid = (b + e) >> 1;
+		auto lq = query(node * 2, b, mid, i, j);
+		auto rq = query(node * 2 + 1, mid + 1, e, i, j);
+		ll mini = min(lq.first, rq.second);
+		pair<ll, ll> t = {(lq.first - mini + rq.first),
+						  (lq.second + rq.second - mini)};
+		return t;
 	}
 };
 
@@ -599,24 +585,6 @@ void fileIOE()
 	freopen("error.txt", "w", stderr);
 #endif
 }
-
-// 1.  Think DP/recursion.
-// 2.  Think greedy.
-// 3.  Think binary search.
-// 4.  Think sliding window/two pointer.
-// 5.  Think bit masking.
-// 6.  Think bit manipulation.
-// 7.  Think prefix.
-// 8.  Think difference array.
-// 9.  Think mapping.
-// 10. Think multiset/ordered set.
-// 11. Think gcd/lcm/modulo arithmetic.
-// 12. Think in variables/expressions.
-// 13. Think dfs/bfs.
-// 14. Think bipartite.
-// 15. Think in complement like all - answer.
-// 16. Think segment tree.
-// 17. Think brute force.
 
 void solve()
 {
