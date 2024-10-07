@@ -32,6 +32,7 @@
 	cin.tie(0);                   \
 	cout.tie(0);
 using ll = long long int;
+using ld = long double;
 #ifndef ONLINE_JUDGE
 #include "template.cpp"
 #else
@@ -43,11 +44,13 @@ using namespace __gnu_pbds;
 typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key, less<ll> is comparator
 auto start = high_resolution_clock::now();
 
-// cc 153
-// cf 975 div 2
+// abc 374
+// meta hacker cup
+// lc w
+// cf 977 div 2
 
-ll mod = 1e9 + 7;
-ll MAXN = 1e1 + 1;
+ll mod = 998244353;
+ll MAXN = 1e7 + 5;
 ll facN = 1e1 + 1;
 vector<ll> sieveerato(MAXN, 1);
 vector<ll> spf(MAXN, 1);
@@ -126,8 +129,6 @@ vector<ll> getFactorization(ll x)
 
 void sieve()
 {
-	MAXN = 5e6;
-	sieveerato.resize(MAXN, 1);
 	sieveerato[0] = 0;
 	sieveerato[1] = 0;
 	for (ll i = 2; i * i <= MAXN - 1; ++i)
@@ -493,80 +494,142 @@ namespace MillerRabin
 
 struct ST
 {
-	vector<pair<ll, ll>> t;
-	ll n;
+	vector<ll> t;
+	ll size;
 
-	ST(ll size)
+	ST(ll n)
 	{
-		n = size;
-		t.resize(4 * n, {0, 0});
+		size = n;
+		t.assign(4 * n, 0);
 	}
 
-	void build(string &a, ll node, ll b, ll e)
+	void update(ll pos, ll val, ll node, ll node_left, ll node_right)
 	{
-		if (b == e)
+		if (node_left == node_right)
 		{
-
-			if (a[b] == '(')
-			{
-				t[node] = {1, 0};
-			}
-			else
-			{
-				t[node] = {0, 1};
-			}
+			t[node] += val;
 			return;
 		}
-		ll mid = (b + e) >> 1;
-		ll leftChild = node << 1;
-		ll rightChild = leftChild | 1;
-		build(a, leftChild, b, mid);
-		build(a, rightChild, mid + 1, e);
-		ll mini = min(t[leftChild].first, t[rightChild].second);
-		t[node] = {(t[leftChild].first - mini + t[rightChild].first),
-				   (t[leftChild].second + t[rightChild].second - mini)};
+
+		ll mid = (node_left + node_right) / 2;
+		if (pos <= mid)
+			update(pos, val, 2 * node + 1, node_left, mid);
+		else
+			update(pos, val, 2 * node + 2, mid + 1, node_right);
+
+		t[node] = t[2 * node + 1] + t[2 * node + 2];
 	}
 
-	// void upd(ll node, ll b, ll e, ll i, char oldChar, char newChar)
-	// {
-	// 	if (b > i || e < i)
-	// 	{
-	// 		return;
-	// 	}
-	// 	if (b == e)
-	// 	{
-	// 		t[node][oldChar - 'a'] = 0;
-	// 		t[node][newChar - 'a'] = 1;
-	// 		return;
-	// 	}
-	// 	ll mid = (b + e) >> 1;
-	// 	ll leftChild = node << 1;
-	// 	ll rightChild = leftChild | 1;
-	// 	upd(leftChild, b, mid, i, oldChar, newChar);
-	// 	upd(rightChild, mid + 1, e, i, oldChar, newChar);
-	// 	for (int i = 0; i < 26; ++i)
-	// 	{
-	// 		t[node][i] = t[leftChild][i] + t[rightChild][i];
-	// 	}
-	// }
-
-	pair<ll, ll> query(ll node, ll b, ll e, ll i, ll j)
+	ll query(ll l, ll r, ll node, ll node_left, ll node_right)
 	{
-		if (e < i || b > j)
-		{
-			return {0, 0};
-		}
-		if (i <= b && j >= e)
+		if (l > r)
+			return 0;
+		if (l == node_left && r == node_right)
 		{
 			return t[node];
 		}
+
+		ll mid = (node_left + node_right) / 2;
+		return query(l, min(r, mid), 2 * node + 1, node_left, mid) +
+			   query(max(l, mid + 1), r, 2 * node + 2, mid + 1, node_right);
+	}
+
+	void update(ll pos, ll val)
+	{
+		update(pos, val, 0, 0, size - 1);
+	}
+
+	ll query(ll l, ll r)
+	{
+		return query(l, r, 0, 0, size - 1);
+	}
+};
+
+struct LST
+{
+#define lc (n << 1)
+#define rc ((n << 1) | 1)
+
+	vector<ll> t, lazy;
+	ll n_size;
+
+	LST(ll n)
+	{
+		n_size = n;
+		t.resize(4 * n, 0);
+		lazy.resize(4 * n, LLONG_MAX);
+	}
+
+	inline void push(ll n, ll b, ll e)
+	{
+		if (lazy[n] != LLONG_MAX)
+		{
+			t[n] = lazy[n] * (e - b + 1);
+			if (b != e)
+			{
+				lazy[lc] = lazy[n];
+				lazy[rc] = lazy[n];
+			}
+			lazy[n] = LLONG_MAX;
+		}
+	}
+
+	inline ll combine(ll a, ll b)
+	{
+		return a + b;
+	}
+
+	inline void pull(ll n)
+	{
+		t[n] = combine(t[lc], t[rc]);
+	}
+
+	void build(ll n, ll b, ll e, vector<ll> &arr)
+	{
+		lazy[n] = LLONG_MAX;
+		if (b == e)
+		{
+			t[n] = arr[b];
+			return;
+		}
 		ll mid = (b + e) >> 1;
-		auto lq = query(node * 2, b, mid, i, j);
-		auto rq = query(node * 2 + 1, mid + 1, e, i, j);
-		ll mini = min(lq.first, rq.second);
-		pair<ll, ll> t = {(lq.first - mini + rq.first),
-						  (lq.second + rq.second - mini)};
-		return t;
+		build(lc, b, mid, arr);
+		build(rc, mid + 1, e, arr);
+		pull(n);
+	}
+
+	void upd(ll n, ll b, ll e, ll i, ll j, ll v)
+	{
+		push(n, b, e);
+		if (j < b || e < i)
+		{
+			return;
+		}
+		if (i <= b && e <= j)
+		{
+			lazy[n] = v;
+			push(n, b, e);
+			return;
+		}
+		ll mid = (b + e) >> 1;
+		upd(lc, b, mid, i, j, v);
+		upd(rc, mid + 1, e, i, j, v);
+		pull(n);
+	}
+
+	ll query(ll n, ll b, ll e, ll i, ll j)
+	{
+		push(n, b, e);
+		if (i > e || b > j)
+		{
+			return 0;
+		}
+		if (i <= b && e <= j)
+		{
+			return t[n];
+		}
+		ll mid = (b + e) >> 1;
+		return combine(query(lc, b, mid, i, j), query(rc, mid + 1, e, i, j));
 	}
 };
 
@@ -586,25 +649,75 @@ void fileIOE()
 #endif
 }
 
-void solve()
+void dfs(auto n, auto m, auto &a, auto &d, auto &k, auto &dp, auto &g, auto &v, auto node)
 {
-	
+	v[node] = 1;
+	for (auto it : g[node])
+	{
+		if (!v[it])
+		{
+			v[it] = 1;
+			dfs(n, m, a, d, k, dp, g, v, it);
+		}
+	}
 }
 
-signed main()
+void solve()
+{
+	ll n, m;
+	cin >> n >> m;
+	vector<ll> a(m), d(m), k(m);
+	for (ll i = 0; i < m; ++i)
+	{
+		cin >> a[i] >> d[i] >> k[i];
+	}
+	vector<vector<ll>> dp(11, vector<ll>(n + 1, 0));
+	for (ll i = 0; i < m; ++i)
+	{
+		dp[d[i]][a[i]] = max((ll)dp[d[i]][a[i]], k[i]);
+	}
+	vector<set<ll>> g(n + 1);
+	for (ll j = 1; j <= n; ++j)
+	{
+		for (ll i = 1; i <= 10; ++i)
+		{
+			if (dp[i][j] > 0)
+			{
+				dp[i][j + i] = max(dp[i][j + i], dp[i][j] - 1);
+				g[j].insert(i + j);
+				g[i + j].insert(j);
+			}
+		}
+	}
+	ll ans = 0;
+	vector<ll> v(n + 1, 0);
+	for (ll i = 1; i <= n; ++i)
+	{
+		if (v[i] == 0)
+		{
+			++ans;
+			dfs(n, m, a, d, k, dp, g, v, i);
+		}
+	}
+	cout << ans << endl;
+	debug(dp, g);
+}
+
+int main()
 {
 	shibo
 		ll t = 1,
 		   n = 2e5;
 	// fileIOE();
-	//    prime(); // uncomment to get prime numbers till 1e7 and isPrime functionality
-	//    sievespf(); // uncomment for getFactorization functionality
-	//     preNCR(); // uncomment to get ncr of numbers % mod
-	//      MillerRabin::init(); // uncomment to get primality test upto 1e18
+	// prime(); // uncomment to get prime numbers till 1e7 and isPrime functionality
+	//       sievespf(); // uncomment for getFactorization functionality
+	//        preNCR(); // uncomment to get ncr of numbers % mod
+	//         MillerRabin::init(); // uncomment to get primality test upto 1e18
 	cin >> t; // uncomment to use test cases
 	while (t--)
 	{
 		solve();
 	}
+
 	timer();
 }
