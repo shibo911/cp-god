@@ -31,7 +31,7 @@
 	ios_base::sync_with_stdio(0); \
 	cin.tie(0);                   \
 	cout.tie(0);
-using ll = long long int;
+using ll = long long;
 using ld = long double;
 #ifndef ONLINE_JUDGE
 #include "template.cpp"
@@ -44,19 +44,21 @@ using namespace __gnu_pbds;
 typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key, less<ll> is comparator
 auto start = high_resolution_clock::now();
 
-// abc 3
-// meta hacker cup
 // lc w
 // cf 977 div 2
+// cc 155
+// abc 375
+// lc bw
+// lc w
 
 ll mod = 998244353;
-ll MAXN = 1e7 + 5;
+ll MAXN = 1e1 + 1;
 ll facN = 1e1 + 1;
 vector<ll> sieveerato(MAXN, 1);
 vector<ll> spf(MAXN, 1);
 vector<ll> primes;
 vector<ll> f(facN), inv(facN), finv(facN);
-const ll inf = LLONG_MAX - 1;
+ll inf = LLONG_MAX - 5;
 
 // ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⣤⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 // ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣶⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -98,16 +100,15 @@ const ll inf = LLONG_MAX - 1;
 // ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⡇⠀⠀⡇⠸⡇⠀⠙⠲⠔⠚⠁⠀⠀⠀⠀⠙⠓⠚⠛⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 // ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢧⣤⡼⠷⠤⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 
-void sievespf()
+void sievespf(ll num)
 {
-	MAXN = 1e4 + 5;
-	spf.resize(MAXN, 1);
+	spf.resize(num, 1);
 	spf[0] = 0;
-	for (ll i = 2; i <= MAXN - 1; i++)
+	for (ll i = 2; i <= num - 1; i++)
 	{
 		if (spf[i] == 1)
 		{
-			for (ll j = i; j <= MAXN - 1; j += i)
+			for (ll j = i; j <= num - 1; j += i)
 			{
 				if (spf[j] == 1)
 					spf[j] = i;
@@ -127,15 +128,15 @@ vector<ll> getFactorization(ll x)
 	return ret;
 }
 
-void sieve()
+void sieve(ll num)
 {
 	sieveerato[0] = 0;
 	sieveerato[1] = 0;
-	for (ll i = 2; i * i <= MAXN - 1; ++i)
+	for (ll i = 2; i * i <= num - 1; ++i)
 	{
 		if (sieveerato[i])
 		{
-			for (ll j = i * i; j <= MAXN - 1; j += i)
+			for (ll j = i * i; j <= num - 1; j += i)
 			{
 				sieveerato[j] = 0;
 			}
@@ -143,10 +144,10 @@ void sieve()
 	}
 }
 
-void prime()
+void prime(ll num)
 {
-	sieve();
-	for (ll i = 0; i <= MAXN - 1; ++i)
+	sieve(num);
+	for (ll i = 0; i <= num - 1; ++i)
 	{
 		if (sieveerato[i])
 		{
@@ -398,23 +399,22 @@ ll sumDigits(ll num)
 	return sum;
 }
 
-void preNCR()
+void preNCR(ll num)
 {
-	facN = 2e5 + 1;
-	f.resize(facN), inv.resize(facN), finv.resize(facN);
+	f.resize(num), inv.resize(num), finv.resize(num);
 	f[0] = 1;
-	for (ll i = 1; i < facN; i++)
+	for (ll i = 1; i < num; i++)
 	{
 		f[i] = 1LL * i * f[i - 1] % mod;
 	}
 	inv[1] = 1;
-	for (ll i = 2; i < facN; i++)
+	for (ll i = 2; i < num; i++)
 	{
 		inv[i] = (-(1LL * mod / i) * inv[mod % i]) % mod;
 		inv[i] = (inv[i] + mod) % mod;
 	}
 	finv[0] = 1;
-	for (ll i = 1; i < facN; i++)
+	for (ll i = 1; i < num; i++)
 	{
 		finv[i] = 1LL * inv[i] * finv[i - 1] % mod;
 	}
@@ -495,53 +495,49 @@ namespace MillerRabin
 struct ST
 {
 	vector<ll> t;
-	ll size;
-
 	ST(ll n)
 	{
-		size = n;
-		t.assign(4 * n, 0);
+		t.resize(4 * n);
 	}
 
-	void update(ll pos, ll val, ll node, ll node_left, ll node_right)
+	void build(vector<ll> &a, ll n, ll b, ll e)
 	{
-		if (node_left == node_right)
+		if (b == e)
 		{
-			t[node] += val;
+			t[n] = a[b];
 			return;
 		}
-
-		ll mid = (node_left + node_right) / 2;
-		if (pos <= mid)
-			update(pos, val, 2 * node + 1, node_left, mid);
-		else
-			update(pos, val, 2 * node + 2, mid + 1, node_right);
-
-		t[node] = t[2 * node + 1] + t[2 * node + 2];
+		ll mid = (b + e) >> 1, l = n << 1, r = l | 1;
+		build(a, l, b, mid);
+		build(a, r, mid + 1, e);
+		t[n] = gcd(t[l], t[r]);
 	}
 
-	ll query(ll l, ll r, ll node, ll node_left, ll node_right)
+	void upd(ll n, ll b, ll e, ll i, ll x)
 	{
-		if (l > r)
-			return 0;
-		if (l == node_left && r == node_right)
+		if (b > i || e < i)
+			return;
+		if (b == e && b == i)
 		{
-			return t[node];
+			t[n] = x;
+			return;
 		}
-
-		ll mid = (node_left + node_right) / 2;
-		return query(l, min(r, mid), 2 * node + 1, node_left, mid) +
-			   query(max(l, mid + 1), r, 2 * node + 2, mid + 1, node_right);
+		ll mid = (b + e) >> 1, l = n << 1, r = l | 1;
+		upd(l, b, mid, i, x);
+		upd(r, mid + 1, e, i, x);
+		t[n] = min(t[l], t[r]);
 	}
 
-	void update(ll pos, ll val)
+	ll query(ll n, ll b, ll e, ll i, ll j)
 	{
-		update(pos, val, 0, 0, size - 1);
-	}
-
-	ll query(ll l, ll r)
-	{
-		return query(l, r, 0, 0, size - 1);
+		if (b > j || e < i)
+			return 0;
+		if (b >= i && e <= j)
+			return t[n];
+		ll mid = (b + e) >> 1, l = n << 1, r = l | 1;
+		ll L = query(l, b, mid, i, j);
+		ll R = query(r, mid + 1, e, i, j);
+		return gcd(L, R);
 	}
 };
 
@@ -557,20 +553,22 @@ struct LST
 	{
 		n_size = n;
 		t.resize(4 * n, 0);
-		lazy.resize(4 * n, LLONG_MAX);
+		lazy.resize(4 * n, 0);
 	}
 
 	inline void push(ll n, ll b, ll e)
 	{
-		if (lazy[n] != LLONG_MAX)
+		if (lazy[n] != 0)
 		{
-			t[n] = lazy[n] * (e - b + 1);
+			ll sz = e - b + 1;
+			t[n] = sz - t[n];
+
 			if (b != e)
 			{
-				lazy[lc] = lazy[n];
-				lazy[rc] = lazy[n];
+				lazy[lc] ^= 1;
+				lazy[rc] ^= 1;
 			}
-			lazy[n] = LLONG_MAX;
+			lazy[n] = 0;
 		}
 	}
 
@@ -586,7 +584,7 @@ struct LST
 
 	void build(ll n, ll b, ll e, vector<ll> &arr)
 	{
-		lazy[n] = LLONG_MAX;
+		lazy[n] = 0;
 		if (b == e)
 		{
 			t[n] = arr[b];
@@ -598,7 +596,7 @@ struct LST
 		pull(n);
 	}
 
-	void upd(ll n, ll b, ll e, ll i, ll j, ll v)
+	void upd(ll n, ll b, ll e, ll i, ll j)
 	{
 		push(n, b, e);
 		if (j < b || e < i)
@@ -607,13 +605,13 @@ struct LST
 		}
 		if (i <= b && e <= j)
 		{
-			lazy[n] = v;
+			lazy[n] ^= 1;
 			push(n, b, e);
 			return;
 		}
 		ll mid = (b + e) >> 1;
-		upd(lc, b, mid, i, j, v);
-		upd(rc, mid + 1, e, i, j, v);
+		upd(lc, b, mid, i, j);
+		upd(rc, mid + 1, e, i, j);
 		pull(n);
 	}
 
@@ -630,6 +628,101 @@ struct LST
 		}
 		ll mid = (b + e) >> 1;
 		return combine(query(lc, b, mid, i, j), query(rc, mid + 1, e, i, j));
+	}
+
+	ll find_kth_one(ll n, ll b, ll e, ll k)
+	{
+		push(n, b, e);
+		if (b == e)
+		{
+			return b;
+		}
+		ll mid = (b + e) >> 1;
+		push(lc, b, mid);
+		if (t[lc] > k)
+		{
+			return find_kth_one(lc, b, mid, k);
+		}
+		else
+		{
+			return find_kth_one(rc, mid + 1, e, k - t[lc]);
+		}
+	}
+};
+
+template <class T>
+struct BIT
+{ // 1-indexed
+	ll n;
+	vector<T> t;
+	BIT() {}
+	BIT(ll _n)
+	{
+		n = _n;
+		t.assign(n + 1, 0);
+	}
+	T query(ll i)
+	{
+		T ans = 0;
+		for (; i >= 1; i -= (i & -i))
+		{
+			ans += t[i];
+		}
+		return ans;
+	}
+	void upd(ll i, T val)
+	{
+		if (i <= 0)
+		{
+			return;
+		}
+		for (; i <= n; i += (i & -i))
+		{
+			t[i] += val;
+		}
+	}
+	void upd(ll l, ll r, T val)
+	{
+		upd(l, val);
+		upd(r + 1, -val);
+	}
+	T query(ll l, ll r)
+	{
+		return query(r) - query(l - 1);
+	}
+};
+
+struct SparseTable
+{
+	vector<vector<ll>> t;
+	vector<ll> a;
+	ll n;
+	ll maxK;
+	SparseTable(const vector<ll> &input)
+	{
+		n = input.size() - 1;
+		a = input;
+		maxK = 31 - __builtin_clz(n) + 1;
+		t.assign(n + 1, vector<ll>(maxK));
+		build();
+	}
+	void build()
+	{
+		for (ll i = 1; i <= n; ++i)
+			t[i][0] = a[i];
+
+		for (ll k = 1; (1 << k) <= n; ++k)
+		{
+			for (ll i = 1; i + (1 << k) - 1 <= n; ++i)
+			{
+				t[i][k] = min(t[i][k - 1], t[i + (1 << (k - 1))][k - 1]);
+			}
+		}
+	}
+	ll query(ll l, ll r)
+	{
+		ll k = 31 - __builtin_clz(r - l + 1);
+		return min(t[l][k], t[r - (1 << k) + 1][k]);
 	}
 };
 
@@ -649,75 +742,24 @@ void fileIOE()
 #endif
 }
 
-void dfs(auto n, auto m, auto &a, auto &d, auto &k, auto &dp, auto &g, auto &v, auto node)
-{
-	v[node] = 1;
-	for (auto it : g[node])
-	{
-		if (!v[it])
-		{
-			v[it] = 1;
-			dfs(n, m, a, d, k, dp, g, v, it);
-		}
-	}
-}
-
 void solve()
 {
-	ll n, m;
-	cin >> n >> m;
-	vector<ll> a(m), d(m), k(m);
-	for (ll i = 0; i < m; ++i)
-	{
-		cin >> a[i] >> d[i] >> k[i];
-	}
-	vector<vector<ll>> dp(11, vector<ll>(n + 1, 0));
-	for (ll i = 0; i < m; ++i)
-	{
-		dp[d[i]][a[i]] = max((ll)dp[d[i]][a[i]], k[i]);
-	}
-	vector<set<ll>> g(n + 1);
-	for (ll j = 1; j <= n; ++j)
-	{
-		for (ll i = 1; i <= 10; ++i)
-		{
-			if (dp[i][j] > 0)
-			{
-				dp[i][j + i] = max(dp[i][j + i], dp[i][j] - 1);
-				g[j].insert(i + j);
-				g[i + j].insert(j);
-			}
-		}
-	}
-	ll ans = 0;
-	vector<ll> v(n + 1, 0);
-	for (ll i = 1; i <= n; ++i)
-	{
-		if (v[i] == 0)
-		{
-			++ans;
-			dfs(n, m, a, d, k, dp, g, v, i);
-		}
-	}
-	cout << ans << endl;
-	debug(dp, g);
 }
 
-int main()
+signed main()
 {
 	shibo
 		ll t = 1,
 		   n = 2e5;
 	// fileIOE();
 	// prime(); // uncomment to get prime numbers till 1e7 and isPrime functionality
-	//       sievespf(); // uncomment for getFactorization functionality
-	//        preNCR(); // uncomment to get ncr of numbers % mod
-	//         MillerRabin::init(); // uncomment to get primality test upto 1e18
+	//          sievespf(); // uncomment for getFactorization functionality
+	//           preNCR(); // uncomment to get ncr of numbers % mod
+	//            MillerRabin::init(); // uncomment to get primality test upto 1e18
 	cin >> t; // uncomment to use test cases
 	while (t--)
 	{
 		solve();
 	}
-
 	timer();
 }
